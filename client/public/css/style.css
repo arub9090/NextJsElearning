@@ -1,0 +1,9 @@
+.squre {
+    border-radius: 0px;
+}
+
+.jumbotron {
+    background-image: linear-gradient(to left, rgba(106, 17, 203, 0.65), rgba(37, 117, 252, 0.65) );
+    color: white;
+    height: 120px;
+}
