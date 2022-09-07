@@ -8,14 +8,16 @@ const registerUser= asyncHandler(async(req, res)=> {
   //form validation
 
     if(!name || !email || !password){
-       return res.status(400).send("Please put all the fields correctly")
+        res.status(400)
+        throw new Error("Please include all the fields")
     }
 
     // user check
     const userExists = await User.findOne({email})
 
     if(userExists){
-       return res.status(400).send("Email already Exists")
+        res.status(400)
+        throw new Error("User with this email Already Exists")
     }
 
     // hash the password
@@ -38,11 +40,11 @@ const registerUser= asyncHandler(async(req, res)=> {
             email: user.email
         })
     }else {
-        res.status(400).send("Invalid user Data")
+        res.status(400)
+        throw new Error("Invalid user Data")
     }
 
 })
-
 
 module.exports= {
     registerUser,
