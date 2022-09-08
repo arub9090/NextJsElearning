@@ -2,22 +2,29 @@ import React from "react";
 import { useState } from "react";
 import axios from "axios";
 import {toast } from 'react-toastify';
+import {SyncOutlined } from '@ant-design/icons'
+import Link from "next/link";
 
 function register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false)
 
   const onSubmitHandler = async(e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(`http://localhost:8000/api/register`, {
+      setLoading(true)
+      const { data } = await axios.post(`api/register`, {
       name,
       email,
       password,
     });
+    setLoading(false)
     toast.success("Registration Successfull")
+
     } catch (err) {
+      setLoading(false)
       toast.error(err.response.data)
     }
   };
@@ -64,9 +71,16 @@ function register() {
             />
           </div>
 
-          <button type="submit" class="btn btn-primary">
-            Submit
+          <button type="submit" class="btn btn-primary" disabled= {!name || !email || !password || loading}>
+            {loading ? <SyncOutlined spin /> : "Submit Here"}
           </button>
+
+          <p className="text-center p-3">
+            Already Registered?{" "}
+            <Link href='/login'>
+              <a> Login Here </a> 
+            </Link>
+          </p>
         </form>
       </div>
     </>
