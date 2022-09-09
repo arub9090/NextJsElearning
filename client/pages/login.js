@@ -1,29 +1,43 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import axios from "axios";
-import {toast } from 'react-toastify';
-import {SyncOutlined } from '@ant-design/icons'
+import { toast } from "react-toastify";
+import { SyncOutlined } from "@ant-design/icons";
 import Link from "next/link";
+import AuthContext from "../context/AuthContext";
+import { useRouter } from "next/router";
 
 function login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
-  const onSubmitHandler = async(e) => {
+  const router = useRouter();
+
+  //Link to the Context API
+  const { state, dispatch } = useContext(AuthContext);
+
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true)
+      setLoading(true);
       const { data } = await axios.post(`api/login`, {
-      email,
-      password,
-    });
-    setLoading(false)
-    toast.success("Login Successfull")
+        email,
+        password,
+      });
+      setLoading(false);
+      dispatch({
+        type: "LOGIN_USER",
+        payload: data,
+      });
 
+      window.localStorage.setItem("user", JSON.stringify(data));
+
+      toast.success("Login Successfull");
+      router.push("/");
     } catch (err) {
-      setLoading(false)
-      toast.error("Invalid Credentials")
+      setLoading(false);
+      toast.error("Invalid Credentials");
     }
   };
 
@@ -34,7 +48,6 @@ function login() {
       </h1>
       <div className="container col-md-4 offset-md-4 pb-5">
         <form onSubmit={onSubmitHandler}>
-
           <div className="form-group">
             <label for="emailHere">Email</label>
             <input
@@ -58,14 +71,18 @@ function login() {
             />
           </div>
 
-          <button type="submit" class="btn btn-primary" disabled= {!email || !password || loading}>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            disabled={!email || !password || loading}
+          >
             {loading ? <SyncOutlined spin /> : "Login"}
           </button>
 
           <p className="text-center p-3">
             Not Registered Yet?{" "}
-            <Link href='/register'>
-              <a> SignUp Here </a> 
+            <Link href="/register">
+              <a> SignUp Here </a>
             </Link>
           </p>
         </form>
