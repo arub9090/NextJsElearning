@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { SyncOutlined } from "@ant-design/icons";
@@ -11,11 +11,17 @@ function login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { state: {user}, dispatch } = useContext(AuthContext);
 
   const router = useRouter();
-
   //Link to the Context API
-  const { state, dispatch } = useContext(AuthContext);
+  useEffect(() => {
+   
+    if(user){
+      router.push('/')
+    }
+  }, [user])
+  
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();

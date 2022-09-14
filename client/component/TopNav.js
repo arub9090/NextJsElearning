@@ -1,6 +1,6 @@
 import React from "react";
 import { Menu } from "antd";
-import { UserAddOutlined, HomeFilled, LoginOutlined } from "@ant-design/icons";
+import { UserAddOutlined, HomeFilled, LoginOutlined, UserOutlined, UserDeleteOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import {useState, useEffect, useContext} from 'react'
 import AuthContext from "../context/AuthContext";
@@ -11,6 +11,7 @@ import {toast} from 'react-toastify'
 function TopNav() {
   const [current, setCurrent] = useState("")
   const { state, dispatch } = useContext(AuthContext);
+  const {user}= state;
 
   const router = useRouter();
 
@@ -50,7 +51,10 @@ function TopNav() {
         </Link>
       </Menu.Item>
 
-      <Menu.Item key='/login' icon={<LoginOutlined />} onClick={(e)=> {setCurrent(e.key)}}>
+
+     
+      {!user && (<>
+        <Menu.Item key='/login' icon={<LoginOutlined />} onClick={(e)=> {setCurrent(e.key)}}>
         <Link href="/login">
           <a className="text-light">Login</a>
         </Link>
@@ -61,11 +65,19 @@ function TopNav() {
           <a className="text-light">Register</a>
         </Link>
       </Menu.Item>
+      </>)}
 
 
-      <Menu.Item icon={<UserAddOutlined />} onClick={logoutHandler} className="float-right">
-       Logout
+
+      {user && (<>
+      <><Menu.SubMenu key='submenu' title={user.user.name.toUpperCase()} icon={<UserOutlined/>}>
+      <Menu.Item key='/logout' onClick={()=> logoutHandler()} icon={<UserDeleteOutlined/>}>
+        Logout
       </Menu.Item>
+    </Menu.SubMenu></>
+      
+      
+      </>)}
     </Menu>
   );
 }
