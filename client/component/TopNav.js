@@ -67,10 +67,8 @@ function TopNav() {
       </Menu.Item>
       </>)}
 
-
-
       {user && (<>
-      <><Menu.SubMenu key='submenu' title={user.user.name.toUpperCase()} icon={<UserOutlined/>}>
+      <><Menu.SubMenu key='submenu' title={user.name} icon={<UserOutlined/>}>
       <Menu.Item key='/logout' onClick={()=> logoutHandler()} icon={<UserDeleteOutlined/>}>
         Logout
       </Menu.Item>
@@ -78,6 +76,8 @@ function TopNav() {
       
       
       </>)}
+
+   
     </Menu>
   );
 }

@@ -1,81 +1,84 @@
 import bcrypt from "bcrypt";
 import asyncHandler from "express-async-handler";
 const User = require("../models/user");
+import { hashPassword, comparePassword } from "../utils/auth";
 import jwt from "jsonwebtoken";
 
-const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+export const register = async (req, res) => {
+  try {
+    // console.log(req.body);
+    const { name, email, password } = req.body;
+    // validation
+    if (!name) return res.status(400).send("Name is required");
+    if (!password || password.length < 6) {
+      return res
+        .status(400)
+        .send("Password is required and should be min 6 characters long");
+    }
+    let userExist = await User.findOne({ email }).exec();
+    if (userExist) return res.status(400).send("Email is taken");
 
-  //form validation
+    // hash password
+    const hashedPassword = await hashPassword(password);
 
-  if (!name || !email || !password) {
-    return res.status(400).send("Please put all the fields correctly");
-  }
-
-  // user check
-  const userExists = await User.findOne({ email });
-
-  if (userExists) {
-    return res.status(400).send("Email already Exists");
-  }
-
-  // hash the password
-  const salt = await bcrypt.genSalt(12);
-  const hashedPassword = await bcrypt.hash(password, salt);
-
-  //create and put the user to the Database
-  const user = await User.create({
-    name,
-    email,
-    password: hashedPassword,
-  });
-
-  // veryfy the user if that created susscessfully
-
-  if (user) {
-    res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
+    // register
+    const user = new User({
+      name,
+      email,
+      password: hashedPassword,
     });
-  } else {
-    res.status(400).send("Invalid user Data");
+    await user.save();
+    // console.log("saved user", user);
+    return res.json({ ok: true });
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send("Error. Try again.");
   }
-});
-
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 };
 
-const loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-
-  const user = await User.findOne({ email });
-
-  if (user && (await bcrypt.compare(password, user.password))) {
-    res.cookie("token", generateToken(user._id));
-
-    user.password = undefined;
-
-    res.status(200).json({
-      user,
+export const login = async (req, res) => {
+  try {
+    // console.log(req.body);
+    const { email, password } = req.body;
+    // check if our db has user with that email
+    const user = await User.findOne({ email }).exec();
+    if (!user) return res.status(400).send("No user found");
+    // check password
+    const match = await comparePassword(password, user.password);
+    // create signed jwt
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
     });
-  } else {
-    res.status(400).send("Invalid Ceredtials");
+    // return user and token to client, exclude hashed password
+    user.password = undefined;
+    // send token in cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      // secure: true, // only works on https
+    });
+    // send user as json response
+    res.json(user);
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send("Error. Try again.");
   }
-});
+};
 
-const logoutUser = asyncHandler(async (req, res) => {
+export const logout = async (req, res) => {
   try {
     res.clearCookie("token");
-    return res.status(200).json({ message: "SignOut was successful" });
+    return res.json({ message: "Signout success" });
   } catch (err) {
-    res.status(400).send("Logout wasn't successful");
+    console.log(err);
   }
-});
+};
 
-module.exports = {
-  registerUser,
-  loginUser,
-  logoutUser,
+export const currentUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select("-password").exec();
+    console.log("CURRENT_USER", user);
+    return res.json(user);
+  } catch (err) {
+    console.log(err);
+  }
 };
