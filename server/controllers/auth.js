@@ -45,11 +45,10 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const user = await User.findOne({ email }).exec();
 
-  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
-
   if (user && (await bcrypt.compare(password, user.password))) {
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
     res.cookie("token", token, {httpOnly: true});
 
     user.password = undefined;
@@ -73,8 +72,12 @@ const logoutUser = asyncHandler(async (req, res) => {
  export const currentUser = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select("-password").exec();
-    console.log("CURRENT_USER", user);
-    return res.json(user);
+    if(user){
+      return res.json({ok: true});
+    }else{
+      return res.json({ok: false})
+    }
+    
   } catch (err) {
     console.log(err);
   }

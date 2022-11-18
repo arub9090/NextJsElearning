@@ -1,40 +1,20 @@
 import React from "react";
-import { useState, useContext, useEffect } from "react";
-import axios from "axios";
+import {useContext } from "react";
 import AuthContext from "../../context/AuthContext";
-import { useRouter } from "next/router";
-
-
+import UserRoute from "../../component/routes/UserRoute";
 
 function UserIndex() {
-
-  const [hidden, setHidden] = useState(true)
-  const {state:{user}} = useContext(AuthContext)
-
-    useEffect(() => {
-      fetchUser()
-    }, [])
-
-
-    const fetchUser= async ()=>{
-      try {
-          const {data}= await axios.get("/api/current-user")
-          console.log(data);
-          setHidden(false)
-      } catch (error) {
-          console.log(error)
-          setHidden(true)
-      }
-
-    }
-
-
-    
-  return (
-    <>{
-      <h1>Hello This is AriF Rubayet From User Page</h1>
-    }</>
+  const {
+    state: { user },
+  } = useContext(AuthContext);
+  return(
+    <UserRoute>
+      <h1 className="jumbotron text-center square">
+        <pre>{JSON.stringify(user, null ,4)} Welcome Here</pre>
+      </h1>
+    </UserRoute>
   )
 }
 
-export default UserIndex
+export default UserIndex;
+

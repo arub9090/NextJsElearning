@@ -103,6 +103,11 @@ function TopNav() {
               >
                 Logout
               </Menu.Item>
+              <Menu.Item key="/user" icon={<UserDeleteOutlined />}>
+                <Link href="/user">
+                  <a>DashBoard</a>
+                </Link>
+              </Menu.Item>
             </Menu.SubMenu>
           </>
         </>
