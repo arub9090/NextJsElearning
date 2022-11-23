@@ -12,6 +12,8 @@ const awsConfig = {
   apiVersion: process.env.AWS_API_VERSION,
 };
 
+const SES = new AWS.SES(awsConfig);
+
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -92,9 +94,42 @@ const logoutUser = asyncHandler(async (req, res) => {
   }
 }
 
-
 export const sendTestEmail = async( req, res)=>{
-  res.json({ok: true})
+  const params = {
+    Source: process.env.EMAIL_FROM,
+    Destination: {
+      ToAddresses: ["arifrubayet10@gmail.com"],
+    },
+    ReplyToAddresses: [process.env.EMAIL_FROM],
+    Message: {
+      Body: {
+        Html: {
+          Charset: "UTF-8",
+          Data: `
+            <html>
+              <h1>Reset password link</h1>
+              <p>Please use the following link to reset your password</p>
+            </html>
+          `,
+        },
+      },
+      Subject: {
+        Charset: "UTF-8",
+        Data: "Password reset Link HERE",
+      },
+    },
+  };
+
+  const emailSent = SES.sendEmail(params).promise();
+  emailSent
+    .then((data) => {
+      console.log(data);
+      res.json({ ok: true });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
 }
 
 
