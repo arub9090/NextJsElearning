@@ -85,10 +85,18 @@ function login() {
             {loading ? <SyncOutlined spin /> : "Login"}
           </button>
 
-          <p className="text-center p-3">
+          <p className="text-center p-2">
             Not Registered Yet?{" "}
             <Link href="/register">
               <a> SignUp Here </a>
+            </Link>
+          </p>
+
+
+          <p className="text-center">
+          Forgot Password ? 
+            <Link href="/forgot-password">
+            <a className="text-danger">Reset Password</a>
             </Link>
           </p>
         </form>
