@@ -137,7 +137,7 @@ export const forgotPassword = async (req, res) => {
     if (!user) return res.status(400).send("user Not found");
     //send the email if all is good.
     const params = {
-      Source: process.env.EMAIL_FROM,
+      Source: `EDEMY-APP! <${process.env.EMAIL_FROM}>`,
       Destination: {
         ToAddresses: [email],
       },
@@ -157,7 +157,7 @@ export const forgotPassword = async (req, res) => {
         },
         Subject: {
           Charset: "UTF-8",
-          Data: "Password Reset Code [EDEMY-APP]",
+          Data: "Edemy Password Reset Code",
         },
       },
     };

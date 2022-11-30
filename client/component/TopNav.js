@@ -6,6 +6,8 @@ import {
   LoginOutlined,
   UserOutlined,
   UserDeleteOutlined,
+  CarryOutFilled,
+  TeamOutlined
 } from "@ant-design/icons";
 import Link from "next/link";
 import { useState, useEffect, useContext } from "react";
@@ -111,6 +113,28 @@ function TopNav() {
             </Menu.SubMenu>
           </>
         </>
+      )}
+
+      {user && user.role && user.role.includes("instructor ") ? (
+        <Menu.Item
+          key="/instructor/course/create/"
+          icon={<CarryOutFilled />}
+          onClick={(e) => setCurrent(e.key)}
+        >
+          <Link href="/instructor/course/create/">
+            <a className="text-white">Create Course</a>
+          </Link>
+        </Menu.Item>
+      ) : (
+        <Menu.Item
+          key="/user/become-instructor"
+          icon={<TeamOutlined/>}
+          onClick={(e) => setCurrent(e.key)}
+        >
+          <Link href="/user/become-instructor">
+            <a className="text-white">Become Instructor</a>
+          </Link>
+        </Menu.Item>
       )}
     </Menu>
   );

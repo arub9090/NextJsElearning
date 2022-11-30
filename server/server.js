@@ -21,7 +21,8 @@ app.use(cookieParser())
 //Batabase connection
 
 mongoose.connect(process.env.DATABASE, {
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
 }).then(()=> console.log('***DB COnencted***'))
 .catch((err)=> console.log('DATABASE Connection Failed', err))
 
