@@ -147,17 +147,17 @@ export const forgotPassword = async (req, res) => {
             Charset: "UTF-8",
             Data: `
               <html>
-                <h1>Reset password Code</h1>
+                <h1>Reset password Using the following Code.</h1>
                 <h2 style="color:red">${shortCode}</h2>
                 <p>Please use the following Code to reset your password on edemy.com</p>
-                <i>Please Dont Share this code to anyone, EDEMY wont ever ask for this code by phone/Email </i>
+                <i>Please Don't Share this code to anyone, EDEMY never asks for this code by phone or Email </i>
               </html>
             `,
           },
         },
         Subject: {
           Charset: "UTF-8",
-          Data: "Password Reset Code!",
+          Data: "Password Reset Code [EDEMY-APP]",
         },
       },
     };

@@ -18,7 +18,7 @@ function login() {
   useEffect(() => {
    
     if(user){
-      router.push('/')
+      router.push('/user')
     }
   }, [user])
   

@@ -23,7 +23,7 @@ function ForgotPassword() {
     if (user !== null) {
       router.push("/");
     }
-  }, []);
+  }, [user]);
 
   // handle Submit to get the Secrect code Email
   const handleSubmit = async (e) => {
