@@ -115,7 +115,7 @@ function TopNav() {
         </>
       )}
 
-      {user && user.role && user.role.includes("instructor ") ? (
+      {user && user.role && user.role.includes("Instructor") ? (
         <Menu.Item
           key="/instructor/course/create/"
           icon={<CarryOutFilled />}

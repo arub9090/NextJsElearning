@@ -12,9 +12,10 @@ export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   useEffect(() => {
+    let myData= JSON.parse(window.localStorage.getItem('user') || "{}")
     dispatch({
       type: "LOGIN_USER",
-      payload: JSON.parse(window.localStorage.getItem("user")),
+      payload: myData,
     });
   }, []);
 

@@ -1,9 +1,14 @@
 import React from 'react'
+import InstructorRoute from '../../../component/routes/InstructorRoute'
 
-const create = () => {
+const CreateCourse = () => {
   return (
-    <div>create Course here </div>
+    <InstructorRoute>
+      <h1 className="jumbotron text-center square">
+      Instructor Course Create!
+      </h1>
+    </InstructorRoute>
   )
 }
 
-export default create
+export default CreateCourse

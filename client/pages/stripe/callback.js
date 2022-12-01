@@ -5,15 +5,21 @@ import axios from "axios";
 import { SyncOutlined } from "@ant-design/icons";
 
 const StripeCallback = () => {
-  const {
-    state: { user },
-  } = useContext(AuthContext);
+    const {
+        state: { user },
+        dispatch,
+      } = useContext(AuthContext);
 
   useEffect(() => {
     if (user) {
       axios.post("/api/get-account-status").then((res) => {
-       // window.location.href = "/instructor";
-       console.log(res.data);
+        // console.log(res);
+        dispatch({
+          type: "LOGIN_USER",
+          payload: res.data,
+        });
+        window.localStorage.setItem("user", JSON.stringify(res.data));
+        window.location.href = "/instructor";
       });
     }
   }, [user]);
