@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { SyncOutlined } from "@ant-design/icons";
-import UserNav from "../nav/UserNav";
+import InstructorNav from "../nav/InstructorNav";
 
 // making a Protected Route
 function InstructorRoute({ children }) {
@@ -40,7 +40,7 @@ function InstructorRoute({ children }) {
           <div className="container-fluid">
             <div className="row">
               <div className="col-md-2">
-              <UserNav />
+              <InstructorNav/>
               </div>
 
               <div className="col-md-10">{children}</div>
