@@ -1,5 +1,5 @@
 import React from "react";
-import { Select, Button } from "antd";
+import { Select, Button, Avatar, Badge } from "antd";
 const { Option } = Select;
 
 const CourseCreateForm = ({
@@ -8,6 +8,9 @@ const CourseCreateForm = ({
   handleSubmit,
   values,
   setValues,
+  preview,
+  uploadButtonText,
+  handleImageRemove,
 }) => {
   const PriceOptions = [];
   for (let i = 9.99; i <= 100.99; i++) {
@@ -59,7 +62,6 @@ const CourseCreateForm = ({
               defaultValue="$9.99"
               style={{ width: "100%" }}
               onChange={(v) => setValues({ ...values, price: v })}
-              
               size="large"
             >
               {PriceOptions}
@@ -83,7 +85,7 @@ const CourseCreateForm = ({
         <div className="col">
           <div className="form-group">
             <label className="btn btn-outline-secondary btn-block text-left">
-              {values.loading ? "Uploading" : "Image Upload"}
+              {values.loading ? "Uploading" : `${uploadButtonText}`}
               <input
                 type="file"
                 name="image"
@@ -93,6 +95,10 @@ const CourseCreateForm = ({
               />
             </label>
           </div>
+        </div>
+
+        <div className="pt-4">
+        {preview && <Badge count= 'X' onClick={handleImageRemove} className='pointer'><Avatar width={400} src={preview} /></Badge>}
         </div>
       </div>
 
