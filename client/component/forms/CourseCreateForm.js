@@ -2,13 +2,18 @@ import React from "react";
 import { Select, Button } from "antd";
 const { Option } = Select;
 
-function CourseCreateForm({
+const CourseCreateForm = ({
   handleChange,
   handleImage,
   handleSubmit,
   values,
   setValues,
-}) {
+}) => {
+  const PriceOptions = [];
+  for (let i = 9.99; i <= 100.99; i++) {
+    PriceOptions.push(<Option key={i.toFixed(2)}>{i.toFixed(2)}</Option>);
+  }
+
   return (
     <form onSubmit={handleSubmit}>
       <div className="form-group pb-4">
@@ -35,7 +40,7 @@ function CourseCreateForm({
 
       <div className="form-row pb-4">
         <div className="col">
-          <div className="form-group">
+          <div className="form-group pb-4">
             <Select
               style={{ width: "100%" }}
               size="large"
@@ -47,6 +52,31 @@ function CourseCreateForm({
             </Select>
           </div>
         </div>
+
+        {values.paid && (
+          <div className="form-group">
+            <Select
+              defaultValue="$9.99"
+              style={{ width: "100%" }}
+              onChange={(v) => setValues({ ...values, price: v })}
+              
+              size="large"
+            >
+              {PriceOptions}
+            </Select>
+          </div>
+        )}
+      </div>
+
+      <div className="form-group pb-4">
+        <input
+          type="text"
+          name="category"
+          className="form-control"
+          placeholder="Category"
+          value={values.category}
+          onChange={handleChange}
+        />
       </div>
 
       <div className="form-row pb-4">
@@ -83,6 +113,6 @@ function CourseCreateForm({
       </div>
     </form>
   );
-}
+};
 
 export default CourseCreateForm;

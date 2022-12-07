@@ -12,6 +12,7 @@ const CourseCreate = () => {
     description: "",
     price: "9.99",
     uploading: false,
+    category: '',
     paid: true,
     loading: false,
     imagePreview: "",

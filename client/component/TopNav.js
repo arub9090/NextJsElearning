@@ -96,7 +96,7 @@ function TopNav() {
             <>
               <Menu.SubMenu
                 key="submenu"
-                title={user && user.name.toUpperCase()}
+                title={user && user.name}
                 icon={<UserOutlined />}
               >
                 <Menu.Item
