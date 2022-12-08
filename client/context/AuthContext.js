@@ -1,21 +1,24 @@
 import { createContext, useReducer, useEffect } from "react";
 import authReducer from "../reducer/authReducer";
-const AuthContext = createContext();
 import axios from "axios";
 import { useRouter } from "next/router";
 
+
+// initial state
+const initialState = {
+  user: null,
+};
+
+const AuthContext = createContext();
+
 export const AuthProvider = ({ children }) => {
-  const initialState = {
-    user: null,
-  };
   const router = useRouter();
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   useEffect(() => {
-    let myData= JSON.parse(window.localStorage.getItem('user') || "{}")
     dispatch({
       type: "LOGIN_USER",
-      payload: myData,
+      payload: JSON.parse(window.localStorage.getItem("user")),
     });
   }, []);
 

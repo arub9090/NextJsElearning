@@ -36,7 +36,7 @@ function ForgotPassword() {
       setLoading(false);
     } catch (err) {
       setLoading(false);
-      toast(err.response.data);
+      toast.error(err.response.data);
     }
   };
 

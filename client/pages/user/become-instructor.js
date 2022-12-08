@@ -12,6 +12,12 @@ const BecomeInstructor = () => {
     const [loading, setLoading] = useState(false)
     const { state: {user} } = useContext(AuthContext);
 
+    if(user==null){
+      console.log("I got NO user")
+    }else{
+      console.log("There is User", user);
+    }
+
     const becomeInstructor=()=>{
         console.log("become a inctructor")
         setLoading(true);
@@ -28,7 +34,7 @@ const BecomeInstructor = () => {
   return (
     <>
     <div className="jumbotron text-center square display-6">
-        <p> Become an eDemy Instructor {user && user.name.toUpperCase()}</p>
+        <p> Become an eDemy Instructor {user && user.name}</p>
     </div>
 
     <div className="container">

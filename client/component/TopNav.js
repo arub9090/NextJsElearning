@@ -18,10 +18,14 @@ import { toast } from "react-toastify";
 
 function TopNav() {
   const [current, setCurrent] = useState("");
-  const { state, dispatch } = useContext(AuthContext);
-  const { user } = state;
+  const {
+    state: { user },
+    dispatch,
+  } = useContext(AuthContext);
 
   const router = useRouter();
+
+  console.log("user from Top nav-", user);
 
   useEffect(() => {
     console.log(window.location.pathname);
@@ -29,19 +33,11 @@ function TopNav() {
   }, [process.browser && window.location.pathname]);
 
   const logoutHandler = async () => {
-    dispatch({
-      type: "LOGOUT_USER",
-    });
-
+    dispatch({ type: "LOGOUT_USER" });
     window.localStorage.removeItem("user");
-
-    try {
-      const { data } = await axios.get("api/logout");
-      toast.success(data.message);
-      router.push("/login");
-    } catch (err) {
-      toast.error("Logout was not done!");
-    }
+    const { data } = await axios.get("/api/logout");
+    toast(data.message);
+    router.push("/login");
   };
 
   return (
@@ -93,26 +89,24 @@ function TopNav() {
 
         {user && (
           <>
-            <>
-              <Menu.SubMenu
-                key="submenu"
-                title={user && user.name}
-                icon={<UserOutlined />}
+            <Menu.SubMenu
+              key="submenu"
+              title={user && user.name}
+              icon={<UserOutlined />}
+            >
+              <Menu.Item
+                key="/logout"
+                onClick={() => logoutHandler()}
+                icon={<UserDeleteOutlined />}
               >
-                <Menu.Item
-                  key="/logout"
-                  onClick={() => logoutHandler()}
-                  icon={<UserDeleteOutlined />}
-                >
-                  Logout
-                </Menu.Item>
-                <Menu.Item key="/user" icon={<UserDeleteOutlined />}>
-                  <Link href="/user">
-                    <a>DashBoard</a>
-                  </Link>
-                </Menu.Item>
-              </Menu.SubMenu>
-            </>
+                Logout
+              </Menu.Item>
+              <Menu.Item key="/user" icon={<UserDeleteOutlined />}>
+                <Link href="/user">
+                  <a>DashBoard</a>
+                </Link>
+              </Menu.Item>
+            </Menu.SubMenu>
           </>
         )}
 
@@ -126,7 +120,7 @@ function TopNav() {
               <a className="text-white">Create Course</a>
             </Link>
           </Menu.Item>
-        ) : (
+        ) : user && user.role && (
           <Menu.Item
             key="/user/become-instructor"
             icon={<TeamOutlined />}
@@ -143,7 +137,6 @@ function TopNav() {
             key="/instructor"
             icon={<TeamOutlined />}
             onClick={(e) => setCurrent(e.key)}
-           
           >
             <Link href="/instructor">
               <a className="text-white">Instructor Portal</a>
