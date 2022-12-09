@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 const User = require("../models/user");
 import jwt from "jsonwebtoken";
-import AWS from "aws-sdk";
+import AWS, { APIGateway } from "aws-sdk";
 import { nanoid } from "nanoid";
 import Course from "../models/course";
 import slugify from "slugify";
@@ -87,7 +87,7 @@ export const create = async (req, res) => {
     });
 
     if (alreadyExists) {
-      return res.status(400).sebd("Title is taken");
+      return res.status(400).send("Title is taken");
     } else {
       const course = await new Course({
         slug: slugify(req.body.name),
@@ -99,5 +99,17 @@ export const create = async (req, res) => {
     }
   } catch (err) {
     console.log(err);
+  }
+};
+export const read = async (req, res) => {
+  try {
+    const course = await Course.findOne({ slug: req.params.slug })
+      .populate("instructor", "_id name")
+      .exec();
+
+    res.json(course);
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send("Single Course Not Found");
   }
 };

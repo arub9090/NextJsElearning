@@ -63,8 +63,8 @@ const CourseCreate = () => {
       toast("Greate Now you can start Adding lessons");
       router.push("/instructor");
     } catch (err) {
-      console.log(err.response.data);
-      toast.error("Course Creation got failed");
+      //console.log(err.response.data);
+      toast.error(err.response.data);
     }
   };
 
