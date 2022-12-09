@@ -1,7 +1,5 @@
-import mongoose, { mongo } from "mongoose";
-
+import mongoose from "mongoose";
 const { ObjectId } = mongoose.Schema;
-
 const lessonSchema = new mongoose.Schema(
   {
     title: {

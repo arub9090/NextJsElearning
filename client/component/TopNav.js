@@ -25,7 +25,7 @@ function TopNav() {
 
   const router = useRouter();
 
-  console.log("user from Top nav-", user);
+  //console.log("user from Top nav-", user);
 
   useEffect(() => {
     console.log(window.location.pathname);

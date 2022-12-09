@@ -27,7 +27,6 @@ const userSchema = mongoose.Schema(
       default: ["Subscriber"],
       enum: ["Subscriber", "Instructor", "Admin"],
     },
-
     stripe_account_id: "",
     stripe_seller: "",
     stripeSesslen: {},
@@ -39,5 +38,4 @@ const userSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
-
 module.exports = mongoose.model("User", userSchema);

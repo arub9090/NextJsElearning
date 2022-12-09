@@ -7,6 +7,7 @@ const { Option } = Select;
 import CourseCreateForm from "../../../component/forms/CourseCreateForm";
 import Resizer from "react-image-file-resizer";
 import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 const CourseCreate = () => {
   const [values, setValues] = useState({
@@ -19,8 +20,9 @@ const CourseCreate = () => {
     loading: false,
   });
   const [preview, setPreview] = useState("");
-  const [image, setImage] = useState({})
+  const [image, setImage] = useState({});
   const [uploadButtonText, setUploadButtonText] = useState("Upload Image");
+  const router = useRouter();
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -37,7 +39,7 @@ const CourseCreate = () => {
         let { data } = await axios.post("/api/course/upload-image", {
           image: uri,
         });
-        console.log("IMAGE UPLOADED", data);
+        //console.log("IMAGE UPLOADED", data);
         // set image in the state
         setImage(data);
         setValues({ ...values, loading: false });
@@ -49,31 +51,38 @@ const CourseCreate = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(values);
+    //console.log(values);
+
+    try {
+      const { data } = await axios.post("/api/course", {
+        ...values,
+        image,
+      });
+      toast("Greate Now you can start Adding lessons");
+      router.push("/instructor");
+    } catch (err) {
+      console.log(err.response.data);
+      toast.error("Course Creation got failed");
+    }
   };
 
-
-
-
-  const handleImageRemove = async ()=>{
+  const handleImageRemove = async () => {
     try {
-      setValues({...values, loading: true})
-      const res= await axios.post('/api/course/remove-image', {image})
-      setImage({})
-      setPreview('')
-      setUploadButtonText('Image Upload')
-      toast.success('Image Removed Successfully !!')
-      setValues({...values, loading: false})
-      
+      setValues({ ...values, loading: true });
+      const res = await axios.post("/api/course/remove-image", { image });
+      setImage({});
+      setPreview("");
+      setUploadButtonText("Image Upload");
+      toast.success("Image Removed Successfully !!");
+      setValues({ ...values, loading: false });
     } catch (err) {
-      console.log(err)
-      setValues({...values, loading: false})
-      toast.error('Image Removal Failed')
+      console.log(err);
+      setValues({ ...values, loading: false });
+      toast.error("Image Removal Failed");
     }
-  }
-
+  };
 
   return (
     <InstructorRoute>
