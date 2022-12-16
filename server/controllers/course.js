@@ -144,3 +144,28 @@ export const uploadVideo = async (req, res) => {
     return res.status(400).send("Error on Video Upload On BackEnd");
   }
 };
+
+export const removeVideo = async (req, res) => {
+  try {
+    const { Bucket, Key } = req.body;
+    if (!Bucket && !Key) return res.status(400).send("Video Delete failed");
+
+    const params = {
+      Bucket: Bucket,
+      Key: Key,
+    };
+
+    // delete from S3
+
+    S3.deleteObject(params, (err, data) => {
+      if (err) {
+        console.log(err);
+        res.sendStatus(400);
+      } else {
+        res.send({ ok: true });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
