@@ -17,7 +17,7 @@ const lessonSchema = new mongoose.Schema(
       type: {},
       minlength: 200,
     },
-    video_link: {},
+    video: {},
     free_preview: {
       type: Boolean,
       default: false,
@@ -63,7 +63,7 @@ const courseSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    lessons: [lessonSchema],   // each lesson should meet the requirement for the lessons Schema
+    lessons: [lessonSchema], // each lesson should meet the requirement for the lessons Schema
   },
   { timestamps: true }
 );
