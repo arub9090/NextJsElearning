@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import Item from "antd/lib/list/Item";
 import { DeleteOutlined } from "@ant-design/icons";
+import UpdateLessonForm from "../../../../component/forms/UpdateLessonForm";
 
 const CourseEdit = () => {
   const [values, setValues] = useState({
@@ -32,6 +33,14 @@ const CourseEdit = () => {
 
   const [visible, setVisible] = useState(false);
   const [current, setCurrent] = useState({});
+
+  const [uploadVideoButtonText, setUploadVideoButtonText] =useState("Upload Video");
+  const [progress, setProgress] = useState(0);
+  const [uploading, setUploading] = useState(false);
+
+
+
+
 
   useEffect(() => {
     loadCourse();
@@ -142,6 +151,69 @@ const CourseEdit = () => {
     const { data } = await axios.put(`/api/course/${slug}/${removed[0]._id}`);
     console.log("LESSON DELETED =>", data);
   };
+
+  /**
+   * lesson update functions
+   */
+
+ const handleVideo = async (e) => {
+    // remove previous
+    if (current.video && current.video.Location) {
+      const res = await axios.post(
+        `/api/course/video-remove/${values._id}`,
+        current.video
+      );
+      console.log("REMOVED ===> ", res);
+    }
+    // upload
+    const file = e.target.files[0];
+    console.log(file);
+    setUploadButtonText(file.name);
+    setUploading(true);
+    // send video as form data
+    const videoData = new FormData();
+    videoData.append("video", file);
+    videoData.append("courseId", values._id);
+    // save progress bar and send video as form data to backend
+    const { data } = await axios.post(
+      `/api/course/video-upload/${values._id}`,
+      videoData,
+      {
+        onUploadProgress: (e) =>
+          setProgress(Math.round((100 * e.loaded) / e.total)),
+      }
+    );
+    // once response is received
+    console.log(data);
+    setCurrent({ ...current, video: data });
+    setUploading(false);
+  };
+
+  const handleUpdateLesson = async (e) => {
+    e.preventDefault();
+    /* // console.log("CURRENT", current);
+    // console.log("**SEND TO BACKEND**");
+    // console.table({ values });
+    let { data } = await axios.post(
+      `/api/course/lesson/${values._id}/${current._id}`,
+      current
+    );
+    // console.log("LESSON UPDATED AND SAVED ===> ", data);
+    setUploadButtonText("Upload video");
+    setProgress(0);
+    setVisible(false);
+    // update lessons
+    if (data.ok) {
+      let arr = values.lessons;
+      const index = arr.findIndex((el) => el._id === current._id);
+      arr[index] = current;
+      setValues({ ...values, lessons: arr });
+      toast("Lesson updated");
+    } */
+  };
+
+  
+
   return (
     <InstructorRoute>
       <h1 className="jumbotron text-center square">Edit Course</h1>
@@ -200,8 +272,16 @@ const CourseEdit = () => {
         onCancel={() => setVisible(false)}
         footer={null}
       >
-        update lesson form
-        <pre>{JSON.stringify(current, null, 4)}</pre>
+        {/* <pre>{JSON.stringify(current, null, 4)}</pre> */}
+        <UpdateLessonForm
+          current={current}
+          setCurrent={setCurrent}
+          handleVideo={handleVideo}
+          handleUpdateLesson={handleUpdateLesson}
+          uploadVideoButtonText={uploadVideoButtonText}
+          progress={progress}
+          uploading={uploading}
+        />
       </Modal>
     </InstructorRoute>
   );
