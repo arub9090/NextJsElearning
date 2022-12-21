@@ -3,11 +3,12 @@ import { useRouter } from "next/router";
 import InstructorRoute from "../../../../component/routes/InstructorRoute";
 import axios from "axios";
 import { Avatar, Tooltip, Button, Modal, List } from "antd";
+import Item from "antd/lib/list/Item";
 import { EditOutlined, CheckOutlined, UploadOutlined } from "@ant-design/icons";
 import ReactMarkdown from "react-markdown";
 import AddLessonForm from "../../../../component/forms/AddLessonForm";
 import { toast } from "react-toastify";
-import Item from "antd/lib/list/Item";
+
 
 const CourseView = () => {
   const [course, setCourse] = useState({});
@@ -21,6 +22,7 @@ const CourseView = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadButtonText, setUploadButtonText] = useState("Upload Video");
   const [progress, setProgress] = useState(0);
+  
 
   const router = useRouter();
   const { slug } = router.query;
@@ -130,7 +132,7 @@ const CourseView = () => {
 
                   <div className="d-flex pt-4">
                     <Tooltip title="Edit">
-                      <EditOutlined className="h5 pointer text-warning mr-4" />
+                      <EditOutlined onClick={()=> router.push(`/instructor/course/edit/${slug}`)} className="h5 pointer text-warning mr-4" />
                     </Tooltip>
                     <Tooltip title="Publish">
                       <CheckOutlined className="h5 pointer text-danger" />
