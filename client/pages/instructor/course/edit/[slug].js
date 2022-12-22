@@ -34,13 +34,10 @@ const CourseEdit = () => {
   const [visible, setVisible] = useState(false);
   const [current, setCurrent] = useState({});
 
-  const [uploadVideoButtonText, setUploadVideoButtonText] =useState("Upload Video");
+  const [uploadVideoButtonText, setUploadVideoButtonText] =
+    useState("Upload Video");
   const [progress, setProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
-
-
-
-
 
   useEffect(() => {
     loadCourse();
@@ -156,11 +153,12 @@ const CourseEdit = () => {
    * lesson update functions
    */
 
- const handleVideo = async (e) => {
-    // remove previous
+  const handleVideo = async (e) => {
+    console.log(values);
+
     if (current.video && current.video.Location) {
       const res = await axios.post(
-        `/api/course/video-remove/${values._id}`,
+        `/api/course/video-remove/${values.instructor._id}`,
         current.video
       );
       console.log("REMOVED ===> ", res);
@@ -176,7 +174,7 @@ const CourseEdit = () => {
     videoData.append("courseId", values._id);
     // save progress bar and send video as form data to backend
     const { data } = await axios.post(
-      `/api/course/video-upload/${values._id}`,
+      `/api/course/video-upload/${values.instructor._id}`,
       videoData,
       {
         onUploadProgress: (e) =>
@@ -190,29 +188,45 @@ const CourseEdit = () => {
   };
 
   const handleUpdateLesson = async (e) => {
+    try {
+      
+    // this current holds all the updated value for the updating Lesson.. 
     e.preventDefault();
-    /* // console.log("CURRENT", current);
-    // console.log("**SEND TO BACKEND**");
-    // console.table({ values });
-    let { data } = await axios.post(
-      `/api/course/lesson/${values._id}/${current._id}`,
+    let { data } = await axios.put(
+      `/api/course/lesson/${slug}/${current._id}`,
       current
     );
     // console.log("LESSON UPDATED AND SAVED ===> ", data);
+
     setUploadButtonText("Upload video");
     setProgress(0);
     setVisible(false);
-    // update lessons
+
+    // update lessons on the Front End SIde..
     if (data.ok) {
       let arr = values.lessons;
-      const index = arr.findIndex((el) => el._id === current._id);
-      arr[index] = current;
-      setValues({ ...values, lessons: arr });
-      toast("Lesson updated");
-    } */
-  };
 
-  
+      // logic find an index on arr array where current._id/ currently updating lesson id  is equal to the an exisitng ID
+
+      const index = arr.findIndex((el) => el._id === current._id);
+      // now we know which index is getting updated on the backend
+
+      arr[index] = current; // our current will be updated on any change on lesson Modal form.. so the updated current value should be
+      //set into that specific lesson index
+
+      // so now our arr / lesson array is fully updated .
+      // set the values --> pointing to lessons--> updated array
+
+      setValues({ ...values, lessons: arr });
+      toast.success("Lesson updated Successfully");
+    }
+
+    } catch (err) {
+      console.log(err)
+      toast.err("Updating the Lesson Failed")
+    }
+
+  };
 
   return (
     <InstructorRoute>

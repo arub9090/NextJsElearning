@@ -4,11 +4,17 @@ import InstructorRoute from "../../../../component/routes/InstructorRoute";
 import axios from "axios";
 import { Avatar, Tooltip, Button, Modal, List } from "antd";
 import Item from "antd/lib/list/Item";
-import { EditOutlined, CheckOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  CheckOutlined,
+  UploadOutlined,
+  QuestionOutlined,
+  CloseOutlined,
+  UserSwitchOutlined,
+} from "@ant-design/icons";
 import ReactMarkdown from "react-markdown";
 import AddLessonForm from "../../../../component/forms/AddLessonForm";
 import { toast } from "react-toastify";
-
 
 const CourseView = () => {
   const [course, setCourse] = useState({});
@@ -22,7 +28,6 @@ const CourseView = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadButtonText, setUploadButtonText] = useState("Upload Video");
   const [progress, setProgress] = useState(0);
-  
 
   const router = useRouter();
   const { slug } = router.query;
@@ -47,8 +52,9 @@ const CourseView = () => {
       );
 
       setValues({ ...values, title: "", content: "", video: {} });
-      setVisible(false);
+      setProgress(0)
       setUploadButtonText("Upload Video");
+      setVisible(false);
       setCourse(data);
       toast.success("Lesson Added successfully !");
     } catch (err) {
@@ -106,6 +112,39 @@ const CourseView = () => {
     }
   };
 
+  const handlePublish = async (e, courseId) => {
+    // console.log(course.instructor._id);
+    // return;
+    try {
+      let answer = window.confirm(
+        "Once you publish your course, it will be live in the marketplace for students to enroll."
+      );
+      if (!answer) return;
+      const { data } = await axios.put(`/api/course/publish/${courseId}`);
+      // console.log("COURSE PUBLISHED RES", data);
+      toast("Congrats. Your course is now live in marketplace!");
+      setCourse(data);
+    } catch (err) {
+      toast("Course publish failed. Try again");
+    }
+  };
+
+  const handleUnpublish = async (e, courseId) => {
+    // console.log(slug);
+    // return;
+    try {
+      let answer = window.confirm(
+        "Once you unpublish your course, it will not appear in the marketplace for students to enroll."
+      );
+      if (!answer) return;
+      const { data } = await axios.put(`/api/course/unpublish/${courseId}`);
+      toast("Your course is now removed from the marketplace!");
+      setCourse(data);
+    } catch (err) {
+      toast("Course unpublish failed. Try again");
+    }
+  };
+
   return (
     <InstructorRoute>
       <div className="contianer-fluid pt-3">
@@ -132,11 +171,32 @@ const CourseView = () => {
 
                   <div className="d-flex pt-4">
                     <Tooltip title="Edit">
-                      <EditOutlined onClick={()=> router.push(`/instructor/course/edit/${slug}`)} className="h5 pointer text-warning mr-4" />
+                      <EditOutlined
+                        onClick={() =>
+                          router.push(`/instructor/course/edit/${slug}`)
+                        }
+                        className="h5 pointer text-warning mr-4"
+                      />
                     </Tooltip>
-                    <Tooltip title="Publish">
-                      <CheckOutlined className="h5 pointer text-danger" />
-                    </Tooltip>
+                    {course.lessons && course.lessons.length < 5 ? (
+                      <Tooltip title="Min 5 lessons required to publish">
+                        <QuestionOutlined className="h5 pointer text-danger" />
+                      </Tooltip>
+                    ) : course.published ? (
+                      <Tooltip title="Unpublish">
+                        <CloseOutlined
+                          onClick={(e) => handleUnpublish(e, course._id)}
+                          className="h5 pointer text-danger"
+                        />
+                      </Tooltip>
+                    ) : (
+                      <Tooltip title="Publish">
+                        <CheckOutlined
+                          onClick={(e) => handlePublish(e, course._id)}
+                          className="h5 pointer text-success"
+                        />
+                      </Tooltip>
+                    )}
                   </div>
                 </div>
               </div>

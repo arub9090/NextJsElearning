@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import InstructorRoute from "../../component/routes/InstructorRoute";
-import { Avatar } from "antd";
+import { Avatar, Tooltip} from "antd";
 import Link from "next/link";
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 
@@ -18,7 +18,7 @@ function InstructorIndex() {
     setCourses(data);
   };
 
-  const myStyle = { marginTop: "-15px", fontSize: "10px" };
+  const myStyle = { marginTop: "-15px", fontSize: "10px"};
   return (
     <InstructorRoute>
       <h1 className="jumbotron text-center square">Instructor DASHBOARD !</h1>
@@ -49,7 +49,7 @@ function InstructorIndex() {
                     </p>
 
                     {course.lessons.length < 5 ? (
-                      <p style={myStyle} className="text-warning">
+                      <p style={myStyle} className="text-primary">
                         At least 5 lessons are required to publish a course
                       </p>
                     ) : course.published ? (
@@ -65,13 +65,13 @@ function InstructorIndex() {
 
                   <div className="col-md-3 mt-3 text-center">
                     {course.published ? (
-                      <div>
+                      <Tooltip title="Published">
                         <CheckCircleOutlined className="h5 pointer text-success" />
-                      </div>
+                      </Tooltip>
                     ) : (
-                      <div>
+                      <Tooltip title="Unpublished">
                         <CloseCircleOutlined className="h5 pointer text-warning" />
-                      </div>
+                      </Tooltip>
                     )}
                   </div>
                 </div>

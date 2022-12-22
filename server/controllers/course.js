@@ -150,6 +150,7 @@ export const uploadVideo = async (req, res) => {
 };
 
 export const removeVideo = async (req, res) => {
+
   try {
     if (req.user._id != req.params.instructorId) {
       return res.status(400).send("Unauthorized");
@@ -202,16 +203,13 @@ export const addLesson = async (req, res) => {
   }
 };
 
-
-
-
 export const update = async (req, res) => {
   try {
     const { slug } = req.params;
     // console.log(slug);
     const course = await Course.findOne({ slug }).exec();
     // console.log("COURSE FOUND => ", course);
-    if (req.user._id != course.instructor) {
+    if (req.user._id != course.instructor._id) {
       return res.status(400).send("Unauthorized");
     }
 
@@ -225,8 +223,6 @@ export const update = async (req, res) => {
     return res.status(400).send(err.message);
   }
 };
-
-
 
 export const removeLesson = async (req, res) => {
   const { slug, lessonId } = req.params;
@@ -242,3 +238,111 @@ export const removeLesson = async (req, res) => {
   res.json({ ok: true });
 };
 
+export const updateLesson = async (req, res) => {
+  // this update will be unique..
+  // logic-> we are finding the course based on slug..
+  // then checking if the req user id is same as the course inctructoor ID
+
+  try {
+    const { slug } = req.params;
+
+    // the current content we are sending from FrontEnd has the Value of all of this...  so we can access from req.body
+
+    const { _id, title, content, video, free_preview } = req.body;
+
+    const course = await Course.findOne({ slug }).select("instructor")
+    .exec();
+
+    
+    console.log("user ID-->", course.instructor != req.user._id);
+
+
+    if (course.instructor._id != req.user._id) {
+      return res.status(400).send("Unauthorized Access");
+    }
+
+    // Special way of updating a nested element in MongoDB
+    const updated = await Course.updateOne(
+      { "lessons._id": _id },
+      {
+        $set: {
+          "lessons.$.title": title,
+          "lessons.$.content": content,
+          "lessons.$.video": video,
+          "lessons.$.free_preview": free_preview,
+        },
+      }
+    ).exec();
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send("Update lesson failed");
+  }
+};
+
+
+
+
+export const publishCourse = async (req, res) => {
+
+//console.log("You got it Published on Bakend");
+
+  try {
+    const { courseId } = req.params;
+    // find post
+    const courseFound = await Course.findById(courseId)
+      .select("instructor")
+      .exec();
+    // is owner?
+    if (req.user._id != courseFound.instructor._id) {
+      return res.status(400).send("Unauthorized");
+    }
+
+    let course = await Course.findByIdAndUpdate(
+      courseId,
+      { published: true },
+      { new: true }
+    ).exec();
+    // console.log("course published", course);
+    // return;
+    res.json(course);
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send("Publish course failed");
+  }
+};
+
+export const unpublishCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    // find post
+    const courseFound = await Course.findById(courseId)
+      .select("instructor")
+      .exec();
+    // is owner?
+    if (req.user._id != courseFound.instructor._id) {
+      return res.status(400).send("Unauthorized");
+    }
+
+    let course = await Course.findByIdAndUpdate(
+      courseId,
+      { published: false },
+      { new: true }
+    ).exec();
+    // console.log("course unpublished", course);
+    // return;
+    res.json(course);
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send("Unpublish course failed");
+  }
+};
+
+
+
+export const courses = async (req, res)=>{
+  const all = await Course.find({published: true}).populate("instructor", "_id name").exec();
+
+  res.json(all);
+}
