@@ -6,7 +6,7 @@ import SingleCourseJumbotron from "../../component/Cards/SingleCourseJumbotron";
 import PreviewModal from "../../component/modal/PreviewModal";
 import SingleCourseLessons from "../../component/Cards/SingleCourseLessons";
 import AuthContext from "../../context/AuthContext";
-
+import {toast} from 'react-toastify'
 const SingleCourse = ({ course }) => {
   // state
   const [showModal, setShowModal] = useState(false);
@@ -35,8 +35,25 @@ const SingleCourse = ({ course }) => {
     console.log("handle paid enrollment");
   };
 
-  const handleFreeEnrollment = () => {
-    console.log("handle free enrollment");
+  const handleFreeEnrollment = async (e) => {
+    // console.log("handle free enrollment");
+    e.preventDefault();
+    try {
+      // check if user is logged in
+      if (!user) router.push("/login");
+      // check if already enrolled
+      if (enrolled.status)
+        return router.push(`/user/course/${enrolled.course.slug}`);
+      setLoading(true);
+      const { data } = await axios.post(`/api/free-enrollment/${course._id}`);
+      toast(data.message);
+      setLoading(false);
+      router.push(`/user/course/${data.course.slug}`);
+    } catch (err) {
+      toast("Enrollment failed. Try again.");
+      console.log(err);
+      setLoading(false);
+    }
   };
 
 
