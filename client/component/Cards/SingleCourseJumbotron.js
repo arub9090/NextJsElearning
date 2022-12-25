@@ -17,6 +17,9 @@ const SingleCourseJumbotron = ({
   enrolled,
   setEnrolled,
 }) => {
+
+
+  
   // destructure
   const {
     name,
