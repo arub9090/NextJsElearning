@@ -7,13 +7,11 @@ const csrf = require('csurf');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
-
-
 require("dotenv").config();
 var csrfProtection = csrf({ cookie: true });
 var parseForm = bodyParser.urlencoded({ extended: false });
 
-//create Express App
+//create Express App New
 const app= express();
 app.use(cookieParser())
 
