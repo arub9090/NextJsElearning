@@ -82,3 +82,4 @@ export const instructorCourses = async (req, res) => {
     console.log(err);
   }
 };
+

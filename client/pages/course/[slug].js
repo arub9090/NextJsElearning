@@ -8,6 +8,8 @@ import SingleCourseLessons from "../../component/Cards/SingleCourseLessons";
 import AuthContext from "../../context/AuthContext";
 import { toast } from "react-toastify";
 import { SyncOutlined } from "@ant-design/icons";
+import { loadStripe } from "@stripe/stripe-js";
+
 const SingleCourse = ({ course }) => {
   // state
   const [showModal, setShowModal] = useState(false);
@@ -32,9 +34,26 @@ const SingleCourse = ({ course }) => {
   const router = useRouter();
   const { slug } = router.query;
 
-  const handlePaidEnrollment = () => {
-    console.log("handle paid enrollment");
+  const handlePaidEnrollment = async () => {
+    // console.log("handle paid enrollment");
+    try {
+      setLoading(true);
+      // check if user is logged in
+      if (!user) router.push("/login");
+      // check if already enrolled
+      if (enrolled.status)
+        return router.push(`/user/course/${enrolled.course.slug}`);
+      const { data } = await axios.post(`/api/paid-enrollment/${course._id}`);
+      const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY);
+      stripe.redirectToCheckout({ sessionId: data });
+    } catch (err) {
+      toast("Enrollment failed, try again.");
+      console.log(err);
+      setLoading(false);
+    }
   };
+
+  
 
   const handleFreeEnrollment = async (e) => {
     // console.log("handle free enrollment");
@@ -57,7 +76,7 @@ const SingleCourse = ({ course }) => {
     }
   };
 
-  return ( loading ? (
+  return loading ? (
     <SyncOutlined
       spin
       className="d-flex justify-content-center display-1 text-primary p-5"
@@ -92,9 +111,7 @@ const SingleCourse = ({ course }) => {
         />
       )}
     </>
-  )
-
-  )
+  );
 };
 
 export async function getServerSideProps({ query }) {

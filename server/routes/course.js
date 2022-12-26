@@ -19,6 +19,7 @@ const {
   unpublishCourse,
   checkEnrollment,
   freeEnrollment,
+  paidEnrollment,
 } = require("../controllers/course");
 
 router.get("/courses", courses);
@@ -55,5 +56,7 @@ router.get("/check-enrollment/:courseId", requireSignin, checkEnrollment);
 
 // enrollment
 router.post("/free-enrollment/:courseId", requireSignin, freeEnrollment);
+router.post("/paid-enrollment/:courseId", requireSignin, paidEnrollment);
+
 
 module.exports = router;
