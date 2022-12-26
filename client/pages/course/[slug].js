@@ -6,7 +6,8 @@ import SingleCourseJumbotron from "../../component/Cards/SingleCourseJumbotron";
 import PreviewModal from "../../component/modal/PreviewModal";
 import SingleCourseLessons from "../../component/Cards/SingleCourseLessons";
 import AuthContext from "../../context/AuthContext";
-import {toast} from 'react-toastify'
+import { toast } from "react-toastify";
+import { SyncOutlined } from "@ant-design/icons";
 const SingleCourse = ({ course }) => {
   // state
   const [showModal, setShowModal] = useState(false);
@@ -56,21 +57,25 @@ const SingleCourse = ({ course }) => {
     }
   };
 
-
-  return (
+  return ( loading ? (
+    <SyncOutlined
+      spin
+      className="d-flex justify-content-center display-1 text-primary p-5"
+    />
+  ) : (
     <>
       <SingleCourseJumbotron
-       course={course}
-       showModal={showModal}
-       setShowModal={setShowModal}
-       preview={preview}
-       setPreview={setPreview}
-       user={user}
-       loading={loading}
-       handlePaidEnrollment={handlePaidEnrollment}
-       handleFreeEnrollment={handleFreeEnrollment}
-       enrolled={enrolled}
-       setEnrolled={setEnrolled} 
+        course={course}
+        showModal={showModal}
+        setShowModal={setShowModal}
+        preview={preview}
+        setPreview={setPreview}
+        user={user}
+        loading={loading}
+        handlePaidEnrollment={handlePaidEnrollment}
+        handleFreeEnrollment={handleFreeEnrollment}
+        enrolled={enrolled}
+        setEnrolled={setEnrolled}
       />
 
       <PreviewModal
@@ -87,7 +92,9 @@ const SingleCourse = ({ course }) => {
         />
       )}
     </>
-  );
+  )
+
+  )
 };
 
 export async function getServerSideProps({ query }) {
