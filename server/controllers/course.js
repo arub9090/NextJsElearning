@@ -8,7 +8,6 @@ import slugify from "slugify";
 import { readFileSync } from "fs";
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
-
 const awsConfig = {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -152,7 +151,6 @@ export const uploadVideo = async (req, res) => {
 };
 
 export const removeVideo = async (req, res) => {
-
   try {
     if (req.user._id != req.params.instructorId) {
       return res.status(400).send("Unauthorized");
@@ -252,12 +250,9 @@ export const updateLesson = async (req, res) => {
 
     const { _id, title, content, video, free_preview } = req.body;
 
-    const course = await Course.findOne({ slug }).select("instructor")
-    .exec();
+    const course = await Course.findOne({ slug }).select("instructor").exec();
 
-    
     console.log("user ID-->", course.instructor != req.user._id);
-
 
     if (course.instructor._id != req.user._id) {
       return res.status(400).send("Unauthorized Access");
@@ -283,12 +278,8 @@ export const updateLesson = async (req, res) => {
   }
 };
 
-
-
-
 export const publishCourse = async (req, res) => {
-
-//console.log("You got it Published on Bakend");
+  //console.log("You got it Published on Bakend");
 
   try {
     const { courseId } = req.params;
@@ -341,13 +332,13 @@ export const unpublishCourse = async (req, res) => {
   }
 };
 
-
-
-export const courses = async (req, res)=>{
-  const all = await Course.find({published: true}).populate("instructor", "_id name").exec();
+export const courses = async (req, res) => {
+  const all = await Course.find({ published: true })
+    .populate("instructor", "_id name")
+    .exec();
 
   res.json(all);
-}
+};
 
 export const checkEnrollment = async (req, res) => {
   const { courseId } = req.params;
@@ -355,7 +346,7 @@ export const checkEnrollment = async (req, res) => {
   const user = await User.findById(req.user._id).exec();
   // check if course id is found in user courses array
   let ids = [];
-  const length= user.courses && user.courses.length
+  const length = user.courses && user.courses.length;
   for (let i = 0; i < length; i++) {
     ids.push(user.courses[i].toString());
   }
@@ -364,7 +355,6 @@ export const checkEnrollment = async (req, res) => {
     course: await Course.findById(courseId).exec(),
   });
 };
-
 
 export const freeEnrollment = async (req, res) => {
   try {
@@ -390,8 +380,6 @@ export const freeEnrollment = async (req, res) => {
   }
 };
 
-
-
 export const paidEnrollment = async (req, res) => {
   try {
     // check if course is free or paid
@@ -407,12 +395,19 @@ export const paidEnrollment = async (req, res) => {
       // purchase details
       line_items: [
         {
-          name: course.name,
-          amount: Math.round(course.price.toFixed(2) * 100),
-          currency: "usd",
+          price_data: {
+            currency: "usd",
+            unit_amount: Math.round(course.price.toFixed(2) * 100),
+            product_data: {
+              name: course.name,
+            },
+          },
           quantity: 1,
         },
       ],
+
+      mode: "payment",
+
       // charge buyer and transfer remaining balance to seller (after fee)
       payment_intent_data: {
         application_fee_amount: Math.round(fee.toFixed(2) * 100),
@@ -424,7 +419,7 @@ export const paidEnrollment = async (req, res) => {
       success_url: `${process.env.STRIPE_SUCCESS_URL}/${course._id}`,
       cancel_url: process.env.STRIPE_CANCEL_URL,
     });
-    console.log("SESSION ID => ", session);
+    //console.log("SESSION ID => ", session);
 
     await User.findByIdAndUpdate(req.user._id, {
       stripeSession: session,
