@@ -40,7 +40,7 @@ function InstructorRoute({ children }) {
           <div className="container-fluid">
             <div className="row">
               <div className="col-md-2">
-              <InstructorNav/>
+                <InstructorNav />
               </div>
 
               <div className="col-md-10">{children}</div>

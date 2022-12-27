@@ -1,4 +1,3 @@
-import SingleCourse from "../../pages/course/[slug]";
 import { currencyFormatter } from "../../utils/helper";
 import { Badge, Modal, Button } from "antd";
 import ReactPlayer from "react-player";
@@ -17,9 +16,6 @@ const SingleCourseJumbotron = ({
   enrolled,
   setEnrolled,
 }) => {
-
-
-  
   // destructure
   const {
     name,

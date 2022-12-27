@@ -1,43 +1,51 @@
-import React from 'react'
-import { useContext, useState } from 'react'
-import AuthContext from '../../context/AuthContext'
-import { Button } from 'antd'
-import axios from 'axios'
-import {toast} from "react-toastify"
-import UserRoute from '../../component/routes/UserRoute'
+import React from "react";
+import { useContext, useState } from "react";
+import AuthContext from "../../context/AuthContext";
+import { Button } from "antd";
+import axios from "axios";
+import { toast } from "react-toastify";
+import UserRoute from "../../component/routes/UserRoute";
 
-import { SettingOutlined, UserSwitchOutlined, LoadingOutlined } from '@ant-design/icons'
+import {
+  SettingOutlined,
+  UserSwitchOutlined,
+  LoadingOutlined,
+} from "@ant-design/icons";
 const BecomeInstructor = () => {
+  const [loading, setLoading] = useState(false);
+  const {
+    state: { user },
+  } = useContext(AuthContext);
 
-    const [loading, setLoading] = useState(false)
-    const { state: {user} } = useContext(AuthContext);
+  if (user == null) {
+    console.log("I got NO user");
+  } else {
+    // console.log("There is User", user);
+  }
 
-    if(user==null){
-      console.log("I got NO user")
-    }else{
-      console.log("There is User", user);
-    }
-
-    const becomeInstructor=()=>{
-        console.log("become a inctructor")
-        setLoading(true);
-        axios.post('/api/make-instructor').then((res)=> {
-            console.log(res);
-            window.location.href= res.data;
-        }).catch((err)=> {
-            console.log(err.response.status)
-            toast("Stripe Onboarding Failed, Try again")
-            setLoading(false)
-        })
-    }
+  const becomeInstructor = () => {
+    console.log("become a inctructor");
+    setLoading(true);
+    axios
+      .post("/api/make-instructor")
+      .then((res) => {
+        console.log(res);
+        window.location.href = res.data;
+      })
+      .catch((err) => {
+        console.log(err.response.status);
+        toast("Stripe Onboarding Failed, Try again");
+        setLoading(false);
+      });
+  };
 
   return (
     <>
-    <div className="jumbotron text-center square display-6">
+      <div className="jumbotron text-center square display-6">
         <p> Become an eDemy Instructor {user && user.name}</p>
-    </div>
+      </div>
 
-    <div className="container">
+      <div className="container">
         <div className="row">
           <div className="col-md-6 offset-md-3 text-center">
             <div className="pt-4">
@@ -73,7 +81,7 @@ const BecomeInstructor = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default BecomeInstructor
+export default BecomeInstructor;

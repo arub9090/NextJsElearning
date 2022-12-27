@@ -6,7 +6,7 @@ import { SyncOutlined } from "@ant-design/icons";
 import UserNav from "../nav/UserNav";
 
 // making a Protected Route
-function UserRoute({ children }) {
+function UserRoute({ children, showNav = true }) {
   const [ok, setOk] = useState(false);
   const router = useRouter();
 
@@ -38,9 +38,7 @@ function UserRoute({ children }) {
         <>
           <div className="container-fluid">
             <div className="row">
-              <div className="col-md-2">
-              <UserNav />
-              </div>
+              <div className="col-md-2">{showNav && <UserNav />}</div>
 
               <div className="col-md-10">{children}</div>
             </div>

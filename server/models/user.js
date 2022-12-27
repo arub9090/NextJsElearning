@@ -30,11 +30,10 @@ const userSchema = mongoose.Schema(
     },
     stripe_account_id: "",
     stripe_seller: "",
-    stripeSesslen: {},
+    stripeSession: {},
     passwordResetCode: {
       data: String,
-      default: ""
-
+      default: "",
     },
     courses: [{ type: ObjectId, ref: "Course" }],
   },
