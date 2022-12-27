@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import formidable from "express-formidable";
-import { isInstructor, requireSignin } from "../middleware";
+import { isInstructor, requireSignin, isEnrolled } from "../middleware";
 
 const {
   courses,
@@ -21,6 +21,7 @@ const {
   freeEnrollment,
   paidEnrollment,
   stripeSuccess,
+  userCourses,
 } = require("../controllers/course");
 
 router.get("/courses", courses);
@@ -60,4 +61,7 @@ router.post("/free-enrollment/:courseId", requireSignin, freeEnrollment);
 router.post("/paid-enrollment/:courseId", requireSignin, paidEnrollment);
 router.get("/stripe-success/:courseId", requireSignin, stripeSuccess);
 
+router.get("/user-courses", requireSignin, userCourses);
+
+router.get("/user/course/:slug", requireSignin, isEnrolled, read);
 module.exports = router;
