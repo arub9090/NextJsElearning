@@ -28,6 +28,7 @@ const CourseView = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadButtonText, setUploadButtonText] = useState("Upload Video");
   const [progress, setProgress] = useState(0);
+  const [students, setStudents] = useState(0);
 
   const router = useRouter();
   const { slug } = router.query;
@@ -35,6 +36,21 @@ const CourseView = () => {
   useEffect(() => {
     loadCourse();
   }, [slug]);
+
+  useEffect(() => {
+    course && studentCount();
+  }, [course]);
+
+  const studentCount = async () => {
+    if (course._id) {
+      const { data } = await axios.post(`/api/instructor/student-count`, {
+        courseId: course._id,
+      });
+
+      console.log("STUDENT COUNT => ", data);
+      setStudents(data.length);
+    }
+  };
 
   const loadCourse = async () => {
     const { data } = await axios.get(`/api/course/${slug}`);
@@ -52,7 +68,7 @@ const CourseView = () => {
       );
 
       setValues({ ...values, title: "", content: "", video: {} });
-      setProgress(0)
+      setProgress(0);
       setUploadButtonText("Upload Video");
       setVisible(false);
       setCourse(data);
@@ -170,6 +186,10 @@ const CourseView = () => {
                   </div>
 
                   <div className="d-flex pt-4">
+                    <Tooltip title={`${students} Enrolled`}>
+                      <UserSwitchOutlined className="h5 pointer text-info mr-4" />
+                    </Tooltip>
+
                     <Tooltip title="Edit">
                       <EditOutlined
                         onClick={() =>

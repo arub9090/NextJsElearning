@@ -43,6 +43,7 @@ function TopNav() {
   return (
     <>
       <Menu
+        theme="dark"
         mode="horizontal"
         className="bg-dark text-warning mb-2"
         selectedKeys={[current]}
@@ -120,16 +121,19 @@ function TopNav() {
               <a className="text-white">Create Course</a>
             </Link>
           </Menu.Item>
-        ) : user && user.role && (
-          <Menu.Item
-            key="/user/become-instructor"
-            icon={<TeamOutlined />}
-            onClick={(e) => setCurrent(e.key)}
-          >
-            <Link href="/user/become-instructor">
-              <a className="text-white">Become Instructor</a>
-            </Link>
-          </Menu.Item>
+        ) : (
+          user &&
+          user.role && (
+            <Menu.Item
+              key="/user/become-instructor"
+              icon={<TeamOutlined />}
+              onClick={(e) => setCurrent(e.key)}
+            >
+              <Link href="/user/become-instructor">
+                <a className="text-white">Become Instructor</a>
+              </Link>
+            </Menu.Item>
+          )
         )}
 
         {user && user.role && user.role.includes("Instructor") && (
